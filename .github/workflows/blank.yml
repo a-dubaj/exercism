@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '1.10'
+        os:
+          - ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.version }}
+      
+      - name: Find and run all tests
+        run: |
+          for test_file in $(find julia -name "runtests.jl"); do
+            exercise_dir=$(dirname "$test_file")
+            exercise_name=$(basename "$exercise_dir")
+            echo "Running tests for $exercise_name..."
+            julia --project="$exercise_dir" "$test_file"
+          done
+        shell: bash
