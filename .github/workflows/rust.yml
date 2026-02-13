@@ -45,7 +45,6 @@ jobs:
       
       - name: Find and test all Rust exercises
         run: |
-          # Znajdź wszystkie Cargo.toml w katalogu rust
           for cargo_file in $(find rust -name "Cargo.toml"); do
             exercise_dir=$(dirname "$cargo_file")
             exercise_name=$(basename "$exercise_dir")
